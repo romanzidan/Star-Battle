@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Star Battle</title>
+	<meta name="viewport" content="width=device-width">
+	<!-- load css -->
+	<link rel="stylesheet" href="style.css">
+	<link rel="stylesheet" href="wf-ionicons.css">
+	<link rel="shortcut icon" href="logo/logo-01.png" />
+</head>
+<body>
+	<!-- container of the canvas -->
+	<div id="container">
+		<div id="instruction">
+			<!-- instruction panel -->
+			<img src="images/background-1.jpg" alt="Background" id="instruction-bg">
+			<img src="logo/logo-01.png" class="logo" alt="Logo">
+			<h1>How to Play Star Battle.</h1>
+			<ul>
+				<li>1. Move the spaceship using the sensible areas in the screen;</li>
+				<li>2. The timer present the time lapsed;</li>
+				<li>3. The fuel counter show the remain fuel;</li>
+				<li>4. During the flight, the spaceship needs to destroy the asteroids and enemy spaceships that are presented in the space;</li>
+				<li>5. You can shoot pressing Space Bar;</li>
+				<li>6. If the spaceship hits a asteroid or another spaceship, you lose 15 points of fuel;</li>
+				<li>7. Enemy spaceship needs 1 shot to be destroyed, you will get 5 points for each enemy destroyed;</li>
+				<li>8. Asteroid needs 2 shots to be destroyed, you will get 10 points for each asteroid destroyed;</li>
+				<li>9. If you destroy a friendly spaceship, you lose 10 points;</li>
+				<li>10. During the flight, the spaceship needs to collect fuel in the space;</li>
+				<li>11. You can pause the game clicking in a button pause, or pressing the letter "p";</li>
+				<li>12. Go beyond all limits;</li>
+			</ul>
+			<h3>Battle in Space with Star Battle Championship...</h3>
+			<button class="btn" onclick="engine.changeState(1)">Start Game</button>
+		</div>
+		<div id="game">
+			<canvas id="canvas" width="960" height="600"></canvas>
+			<div id="assets">
+				<!-- images -->
+				<img src="images/background-1.jpg" alt="Background" id="asset-bg">
+				<img src="images/spaceship.png" alt="Spaceship" id="asset-spaceship">
+				<img src="images/planets/1.png" alt="Planet" id="asset-planet-1">
+				<img src="images/planets/2.png" alt="Planet" id="asset-planet-2">
+				<img src="images/planets/3.png" alt="Planet" id="asset-planet-3">
+				<img src="images/planets/4.png" alt="Planet" id="asset-planet-4">
+				<img src="images/planets/5.png" alt="Planet" id="asset-planet-5">
+				<img src="images/planets/6.png" alt="Planet" id="asset-planet-6">
+				<img src="images/planets/7.png" alt="Planet" id="asset-planet-7">
+				<img src="images/aestroid_brown.png" alt="Asteroid" id="asset-asteroid-1">
+				<img src="images/aestroid_dark.png" alt="Asteroid" id="asset-asteroid-2">
+				<img src="images/aestroid_gray.png" alt="Asteroid" id="asset-asteroid-3">
+				<img src="images/aestroid_gray_2.png" alt="Asteroid" id="asset-asteroid-4">
+				<img src="images/aestroid_brown_crack.png" alt="Asteroid" id="asset-asteroid-crack-1">
+				<img src="images/aestroid_dark_crack.png" alt="Asteroid" id="asset-asteroid-crack-2">
+				<img src="images/aestroid_gray_crack.png" alt="Asteroid" id="asset-asteroid-crack-3">
+				<img src="images/aestroid_gray_2_crack.png" alt="Asteroid" id="asset-asteroid-crack-4">
+				<img src="images/ship_2.png" alt="Ship" id="asset-friend">
+				<img src="images/ship_1.png" alt="Ship" id="asset-enemy">
+				<img src="images/fuel.png" alt="Ship" id="asset-fuel">
+
+				<!-- audio -->
+				<audio id="audio-bg" src="sound/background.mp3" loop></audio>
+				<audio id="audio-destroy" src="sound/destroyed.mp3"></audio>
+				<audio id="audio-shoot" src="sound/shoot.mp3"></audio>
+			</div>
+			<!-- game ui -->
+			<div id="ui">
+				<div class="bar">
+					<img src="images/fuel.png" alt="Fuel">
+					<span id="fuel-counter"></span>
+					<span id="fuel-text">15</span>
+				</div>
+				<div class="orange-box" id="center-box">
+					<div id="score-bar">
+						<span class="wf-ion-android-star"></span>
+						<span id="score-el">50</span>
+					</div>
+					<div id="timer-bar">
+						<span class="wf-ion-android-time"></span>
+						<span id="time-el">30</span>
+					</div>
+				</div>
+				<div id="logo">
+					<img src="logo/logo-02.png" alt="Logo">
+				</div>
+				<!-- game setting buttons -->
+				<div id="buttons">
+					<span class="btn" id="btn-font-up">A+</span>
+					<span class="btn" id="btn-font-down">A-</span>
+					<span class="btn" id="btn-mute"><span class="wf-ion-android-volume-up"></span></span>
+					<span class="btn" id="btn-pause"><span class="wf-ion-ios-pause"></span></span>
+				</div>
+				<!-- spaceship controls -->
+				<div id="controls">
+					<span class="btn"><span class="wf-ion-android-arrow-dropleft"></span></span>
+					<span class="btn"><span class="wf-ion-android-arrow-dropright"></span></span>
+					<span class="btn"><span class="wf-ion-android-arrow-dropup"></span></span>
+					<span class="btn"><span class="wf-ion-android-arrow-dropdown"></span></span>
+				</div>
+				<div id="overlay">
+					<h2>Game over!</h2>
+					<form id="score-submit">
+						<input type="text" id="input-name" placeholder="Name">
+						<button class="btn" id="btn-continue" disabled>Continue</button>
+					</form>
+				</div>
+			</div>
+		</div>
+		<div id="gameover">
+			<img src="images/background-1.jpg" id="gameover-bg" alt="Background">
+			<div style="text-align: center;">
+				<img src="logo/logo-01.png" width="80" alt="Logo">
+				<h1 style="margin: 0">High Scores</h1>
+			</div>
+			<!-- show players score -->
+			<table id="score-table">
+				<tr>
+					<th>Position</th>
+					<th>Name</th>
+					<th>Score</th>
+					<th>Time</th>
+				</tr>
+				<tr>
+					<td>1.</td>
+					<td>Test</td>
+					<td>300</td>
+					<td>20</td>
+				</tr>
+				<tr>
+					<td>2.</td>
+					<td>Test 2</td>
+					<td>200</td>
+					<td>20</td>
+				</tr>
+				<tr>
+					<td>3.</td>
+					<td>abc</td>
+					<td>170</td>
+					<td>15</td>
+				</tr>
+				<tr>
+					<td>4.</td>
+					<td>def</td>
+					<td>150</td>
+					<td>10</td>
+				</tr>
+				<tr>
+					<td>4.</td>
+					<td>fgh</td>
+					<td>150</td>
+					<td>10</td>
+				</tr>
+				<tr>
+					<td>5.</td>
+					<td>czxc</td>
+					<td>130</td>
+					<td>6</td>
+				</tr>
+				<tr>
+					<td>6.</td>
+					<td>scgmg</td>
+					<td>120</td>
+					<td>7</td>
+				</tr>
+			</table>
+			<button class="btn" onclick="engine.changeState(0)">Start Game</button>
+		</div>
+	</div>
+	<!-- load scripts -->
+	<script src="JQuery/jquery-3.2.1.min.js"></script>
+	<script src="js/Sprite.js"></script>
+	<script src="js/Instruction.js"></script>
+	<script src="js/Game.js"></script>
+	<script src="js/Gameover.js"></script>
+	<script src="js/Player.js"></script>
+	<script src="js/Planet.js"></script>
+	<script src="js/Asteroid.js"></script>
+	<script src="js/Friend.js"></script>
+	<script src="js/Enemy.js"></script>
+	<script src="js/Timer.js"></script>
+	<script src="js/Bullet.js"></script>
+	<script src="js/Fuel.js"></script>
+	<script src="js/Engine.js"></script>
+	<script src="js/Particle.js"></script>
+	<script src="js/utility.js"></script>
+	<script>const engine = new Engine(); engine.changeState(0)</script>
+</body>
+</html>
